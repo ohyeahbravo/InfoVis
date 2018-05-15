@@ -2,6 +2,7 @@ package infovis.diagram;
 
 import infovis.diagram.elements.Element;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -42,14 +43,28 @@ public class View extends JPanel{
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.clearRect(0, 0, getWidth(), getHeight());
 		
-		
-		
 		paintDiagram(g2D);
 		
+		int overviewW = 250;
+		int overviewH = 200;
 		
+		// assignment 1-1 : Overview Frame
+		// TODO : what do you mean by entire diagram? constant size is right?
+		// then how to make sure that the overview shows the whole diagram? (how to scale?)
+		Graphics2D overview = (Graphics2D) g;
+		overview.translate(15, 15);	// shift the origin of the overview
+		overview.clearRect(0, 0, overviewW, overviewH);
+		overviewRect.setRect(0, 0, overviewW, overviewH);
+		overview.setStroke(new BasicStroke(2));
+		overview.setColor(Color.BLACK);
+		overview.draw(overviewRect);
+		overview.clip(overviewRect);	// overview frame doesn't intrude the main frame
+		overview.scale(0.25, 0.25);	// scaling the diagram of the overview
+		paintDiagram(overview);
 		
-		
+		// assignment 1-2 : Overview Marker
 	}
+	
 	private void paintDiagram(Graphics2D g2D){
 		for (Element element: model.getElements()){
 			element.paint(g2D);
