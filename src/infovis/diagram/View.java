@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
@@ -43,26 +44,26 @@ public class View extends JPanel{
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.clearRect(0, 0, getWidth(), getHeight());
 		
+		g2D.scale(scale, scale); // for zoom in-out
 		paintDiagram(g2D);
 		
-		int overviewW = 250;
-		int overviewH = 200;
-		
 		// assignment 1-1 : Overview Frame
-		// TODO : what do you mean by entire diagram? constant size is right?
-		// then how to make sure that the overview shows the whole diagram? (how to scale?)
-		Graphics2D overview = (Graphics2D) g;
-		overview.translate(15, 15);	// shift the origin of the overview
-		overview.clearRect(0, 0, overviewW, overviewH);
+		int overviewH = 180;
+		int overviewW = 278;
+		g2D.scale(1/scale, 1/scale);	// scaling back
+		g2D.translate(15, 15);	// shift the origin of the overview
+		g2D.clearRect(0, 0, overviewW, overviewH);
 		overviewRect.setRect(0, 0, overviewW, overviewH);
-		overview.setStroke(new BasicStroke(2));
-		overview.setColor(Color.BLACK);
-		overview.draw(overviewRect);
-		overview.clip(overviewRect);	// overview frame doesn't intrude the main frame
-		overview.scale(0.25, 0.25);	// scaling the diagram of the overview
-		paintDiagram(overview);
+		g2D.draw(overviewRect);
+		g2D.clip(overviewRect);	// overview frame doesn't intrude the main frame
+		g2D.scale(0.25, 0.25);	// scaling the diagram of the overview
+		paintDiagram(g2D);
 		
 		// assignment 1-2 : Overview Marker
+		marker.setRect(0, 0, getWidth()/scale, getHeight()/scale);
+		g2D.setStroke(new BasicStroke(1));
+		g2D.setColor(Color.RED);
+		g2D.draw(marker);
 	}
 	
 	private void paintDiagram(Graphics2D g2D){
