@@ -94,9 +94,8 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int y = e.getY();
 		double scale = view.getScale();
 		
-		//System.out.println("mousePressed: x " + x + " y " + y);
-	   moveMarker = false;
-		
+		moveMarker = false;
+
 	   if (edgeDrawMode){
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
 			model.addElement(drawingEdge);
@@ -105,13 +104,12 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			 * do handle interactions in fisheye mode
 			 */
 			view.repaint();
-		} else if (view.getMarker().contains((x-15)/0.25, (y-15)/0.25)) {
-			moveMarker = true;
-			mouseOffsetX = (x-15)/0.25 - view.getTranslateX();
-			mouseOffsetY = (y-15)/0.25 - view.getTranslateY();			
-			//System.out.println("mousePressed: translateX " + view.getTranslateX() + " translateY " + view.getTranslateY());
-			//System.out.println("mousePressed: mouseOffsetX " + mouseOffsetX + " mouseOffsetY " + mouseOffsetY);
 			
+			// Assignment 1-2 : prepare to drag the marker
+		} else if (view.getMarker().contains((x-view.getOverviewOffset())/0.25, (y-view.getOverviewOffset())/0.25)) {
+			moveMarker = true;
+			mouseOffsetX = (x-view.getOverviewOffset())/view.getRatio() - view.getTranslateX();
+			mouseOffsetY = (y-view.getOverviewOffset())/view.getRatio() - view.getTranslateY();			
 		} else {
 			
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
@@ -182,7 +180,6 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		/*
 		 * Aufgabe 1.2
 		 */
-		//System.out.println("mouseDragged: x " + x + " y " + y);
 		if (fisheyeMode){
 			/*
 			 * handle fisheye mode interactions
@@ -191,9 +188,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		} else if (edgeDrawMode){
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
-		} else if (moveMarker) {	// move marker
-			//System.out.println("mouseDragged: newX " + (x-15)/0.25 + " newY " + (y-15)/0.25); 
-			view.updateTranslation((x-15)/0.25 - mouseOffsetX, (y-15)/0.25 - mouseOffsetY);
+
+			// Assignment 1-2 : moving the marker
+		} else if (moveMarker) {
+			view.updateTranslation((x-view.getOverviewOffset())/view.getRatio() - mouseOffsetX, (y-view.getOverviewOffset())/view.getRatio() - mouseOffsetY);
 			view.repaint();
 		} else if (selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
