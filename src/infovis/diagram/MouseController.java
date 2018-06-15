@@ -27,6 +27,8 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private DrawingEdge drawingEdge = null;
 	 private boolean fisheyeMode;
 	 private GroupingRectangle groupRectangle;
+	 private boolean moveMarker = false;
+	 
 	/*
 	 * Getter And Setter
 	 */
@@ -92,7 +94,8 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int y = e.getY();
 		double scale = view.getScale();
 		
-	   
+		moveMarker = false;
+
 	   if (edgeDrawMode){
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
 			model.addElement(drawingEdge);
@@ -101,6 +104,12 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			 * do handle interactions in fisheye mode
 			 */
 			view.repaint();
+			
+			// Assignment 1-2 : prepare to drag the marker
+		} else if (view.getMarker().contains((x-view.getOverviewOffset())/0.25, (y-view.getOverviewOffset())/0.25)) {
+			moveMarker = true;
+			mouseOffsetX = (x-view.getOverviewOffset())/view.getRatio() - view.getTranslateX();
+			mouseOffsetY = (y-view.getOverviewOffset())/view.getRatio() - view.getTranslateY();			
 		} else {
 			
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
@@ -179,13 +188,18 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		} else if (edgeDrawMode){
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
-		}else if(selectedElement != null){
+
+			// Assignment 1-2 : moving the marker
+		} else if (moveMarker) {
+			view.updateTranslation((x-view.getOverviewOffset())/view.getRatio() - mouseOffsetX, (y-view.getOverviewOffset())/view.getRatio() - mouseOffsetY);
+			view.repaint();
+		} else if (selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
-		view.repaint();
 	}
 	public void mouseMoved(MouseEvent e) {
 	}
+	
 	public boolean isDrawingEdges() {
 		return edgeDrawMode;
 	}
