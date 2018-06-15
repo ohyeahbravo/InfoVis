@@ -45,6 +45,7 @@ public class View extends JPanel {
 						
 			Graphics2D g2D = (Graphics2D) g;
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2D.clearRect(0, 0, getWidth(), getHeight());
 			g2D.translate((getWidth() - getHeight()) / 2, 0);
 			
 			//Setting the labels of the scatter plots
