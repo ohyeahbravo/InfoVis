@@ -23,13 +23,13 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	public void mousePressed(MouseEvent arg0) {
 		int x = arg0.getX();
 		int y = arg0.getY();
+	    double diff = (view.getWidth() - view.getHeight()) / 2;
 		
         if (!view.overviewContain(x, y)) {
             return;
         }
 
-        double dx = (view.getWidth() - view.getHeight()) / 2;
-        view.getMarkerRectangle().setRect(x - dx, y, 0, 0);
+        view.getMarkerRectangle().setRect(x - diff, y, 0, 0);
         view.repaint();
     }
 
@@ -43,9 +43,9 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
         double markerX = view.getMarkerRectangle().getX();
         double markerY = view.getMarkerRectangle().getY();
-        double dx = (view.getWidth() - view.getHeight()) / 2;
+        double diff = (view.getWidth() - view.getHeight()) / 2;
         
-        view.getMarkerRectangle().setRect(markerX, markerY, x - markerX - dx, y - markerY);
+        view.getMarkerRectangle().setRect(markerX, markerY, x - markerX - diff, y - markerY);
         view.repaint();
     }
     

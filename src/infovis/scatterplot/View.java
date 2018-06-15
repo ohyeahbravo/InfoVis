@@ -61,9 +61,9 @@ public class View extends JPanel {
 			//Setting the title of the visualization
 			g2D.setFont(new Font("default", Font.BOLD, 16));
 			g2D.setColor(Color.BLACK);
-			g2D.drawString("Scatter Plot", (int) (getWidth() * 0.2), (int) (getHeight() * 0.04));
+			g2D.drawString("Scatter Plot", (int) (getWidth() * 0.3), (int) (getHeight() * 0.04));
 			
-			//Setting the colors of the scatter plots
+			//Setting up the scatter plots
 			for(int x = 0; x < number; x++) {
 				for(int y = 0; y < number; y++) {
 					g2D.setColor(color);					
@@ -77,28 +77,25 @@ public class View extends JPanel {
 			
 			//Putting the data in the scatter plot
 			for(Data d : model.getList()) {
-				g2D.setColor(d.getColor());				
 				for(int x = 0; x < number; x++) {
+					Range XoffsetRange = model.getRanges().get(x);
 					for(int y = 0; y < number; y++) {
-						Range XoffsetRange = model.getRanges().get(x);
 						Range YoffsetRange = model.getRanges().get(y);
 						
-						double Xrange = XoffsetRange.getMax() - XoffsetRange.getMin();
-						Xrange += Xrange * 0.5;
-						double Yrange = YoffsetRange.getMax() - YoffsetRange.getMin();
-						Yrange += Yrange * 0.5;						
+						double Xrange = (XoffsetRange.getMax() - XoffsetRange.getMin()) * 2;
+						double Yrange = (YoffsetRange.getMax() - YoffsetRange.getMin()) * 2;						
 						
 						double x1 = d.getValues() [x];
-						double y1 = d.getValues() [y];						
+						double y1 = d.getValues() [y];
 												
-						double xVal = (xLabel + (x * plotSize)) + (((x1 - XoffsetRange.getMin() + (0.15 * Xrange)) / Xrange) * plotSize);
-						double yVal = (yLabel + ((y + 1) * plotSize)) - (((y1 - YoffsetRange.getMin() + (0.15 * Yrange)) / Yrange) * plotSize);
+						double xVal = (xLabel + (x * plotSize)) + (((x1 - XoffsetRange.getMin() + (0.2 * Xrange)) / Xrange) * plotSize);
+						double yVal = (yLabel + ((y + 1) * plotSize)) - (((y1 - YoffsetRange.getMin() + (0.2 * Yrange)) / Yrange) * plotSize);
 						
-						if(markerRectangle.contains(plotSize * x + xVal, plotSize * y + yVal)) {
+						if(markerRectangle.contains(xVal, yVal)) {
 							markerData.add(d);
 						} else {
 							g2D.setColor(Color.BLACK);
-							g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));							
+							g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
 						}												
 					}
 				}
@@ -106,23 +103,21 @@ public class View extends JPanel {
 			
 			for(Data d : markerData) {
 				for(int x = 0; x < number; x++) {
+					Range XoffsetRange = model.getRanges().get(x);					
 					for(int y = 0; y < number; y++) {
-						Range XoffsetRange = model.getRanges().get(x);
 						Range YoffsetRange = model.getRanges().get(y);
 						
-						double Xrange = XoffsetRange.getMax() - XoffsetRange.getMin();
-						Xrange += Xrange * 0.5;
-						double Yrange = YoffsetRange.getMax() - YoffsetRange.getMin();
-						Yrange += Yrange * 0.5;	
+						double Xrange = (XoffsetRange.getMax() - XoffsetRange.getMin()) * 2;
+						double Yrange = (YoffsetRange.getMax() - YoffsetRange.getMin()) * 2;
 						
 						double x1 = d.getValues() [x];
 						double y1 = d.getValues() [y];
 						
-						double xVal = (xLabel + (x * plotSize)) + (((x1 - XoffsetRange.getMin() + (0.15 * Xrange)) / Xrange) * plotSize);
-						double yVal = (yLabel + ((y + 1) * plotSize)) - (((y1 - YoffsetRange.getMin() + (0.15 * Yrange)) / Yrange) * plotSize);
+						double xVal = (xLabel + (x * plotSize)) + (((x1 - XoffsetRange.getMin() + (0.2 * Xrange)) / Xrange) * plotSize);
+						double yVal = (yLabel + ((y + 1) * plotSize)) - (((y1 - YoffsetRange.getMin() + (0.2 * Yrange)) / Yrange) * plotSize);
 						
 						g2D.setColor(markerColor);
-						g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
+						g2D.fill(new Rectangle2D.Double(xVal,yVal, 4, 4));
 					}
 				}
 			}
