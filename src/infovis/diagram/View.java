@@ -20,7 +20,7 @@ public class View extends JPanel{
 	private Color color = Color.BLUE;
 	private double scale = 1;
 	private double translateX= 0;
-	private double translateY=0;
+	private double translateY= 0;
 	private Rectangle2D marker = new Rectangle2D.Double();
 	private Rectangle2D overviewRect = new Rectangle2D.Double();   
 
@@ -60,10 +60,28 @@ public class View extends JPanel{
 		paintDiagram(g2D);
 		
 		// assignment 1-2 : Overview Marker
-		marker.setRect(0, 0, getWidth()/scale, getHeight()/scale);
+		double markerWidth = getWidth()/scale;
+		double markerHeight = getHeight()/scale;
+		//System.out.println("***********PAINT**********");
+		//System.out.println("paint: translateX " + getTranslateX() + " translateY " + getTranslateY());
+		//System.out.println("paint: markerWidth " + markerWidth + " markerHeight " + markerHeight);
+		// adjusting the marker position to be inside the overview rectangle
+		if(translateX < 0.0)
+			translateX = 0.0;
+		if(translateY < 0.0)
+			translateY = 0.0;
+		if(translateX > overviewRect.getWidth()*4 - markerWidth)
+			translateX = overviewRect.getWidth()*4 - markerWidth;
+		if(translateY > overviewRect.getHeight()*4 - markerHeight)
+			translateY = overviewRect.getHeight()*4 - markerHeight;
+		
+		//System.out.println("paint: newTranslateX " + translateX + " newTranslateY " + translateY);		
+
+		marker.setRect(this.translateX, this.translateY, markerWidth, markerHeight);
 		g2D.setStroke(new BasicStroke(1));
 		g2D.setColor(Color.RED);
 		g2D.draw(marker);
+
 	}
 	
 	private void paintDiagram(Graphics2D g2D){
@@ -94,9 +112,11 @@ public class View extends JPanel{
 		setTranslateX(x);
 		setTranslateY(y);
 	}	
+	
 	public void updateMarker(int x, int y){
-		marker.setRect(x, y, 16, 10);
+		marker.setFrame(x, y, 16, 10);
 	}
+	
 	public Rectangle2D getMarker(){
 		return marker;
 	}

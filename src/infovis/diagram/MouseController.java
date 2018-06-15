@@ -28,6 +28,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private boolean fisheyeMode;
 	 private GroupingRectangle groupRectangle;
 	 private boolean moveMarker = false;
+	 
 	/*
 	 * Getter And Setter
 	 */
@@ -93,7 +94,9 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int y = e.getY();
 		double scale = view.getScale();
 		
-	   
+		//System.out.println("mousePressed: x " + x + " y " + y);
+	   moveMarker = false;
+		
 	   if (edgeDrawMode){
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
 			model.addElement(drawingEdge);
@@ -104,8 +107,11 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			view.repaint();
 		} else if (view.getMarker().contains((x-15)/0.25, (y-15)/0.25)) {
 			moveMarker = true;
-			mouseOffsetX = x - view.getMarker().getX();
-			mouseOffsetY = y - view.getMarker().getY();
+			mouseOffsetX = (x-15)/0.25 - view.getTranslateX();
+			mouseOffsetY = (y-15)/0.25 - view.getTranslateY();			
+			//System.out.println("mousePressed: translateX " + view.getTranslateX() + " translateY " + view.getTranslateY());
+			//System.out.println("mousePressed: mouseOffsetX " + mouseOffsetX + " mouseOffsetY " + mouseOffsetY);
+			
 		} else {
 			
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
@@ -176,6 +182,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		/*
 		 * Aufgabe 1.2
 		 */
+		//System.out.println("mouseDragged: x " + x + " y " + y);
 		if (fisheyeMode){
 			/*
 			 * handle fisheye mode interactions
@@ -185,10 +192,9 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
 		} else if (moveMarker) {	// move marker
-			System.out.println("haha");
-			view.updateMarker(100, 100);
+			//System.out.println("mouseDragged: newX " + (x-15)/0.25 + " newY " + (y-15)/0.25); 
+			view.updateTranslation((x-15)/0.25 - mouseOffsetX, (y-15)/0.25 - mouseOffsetY);
 			view.repaint();
-			moveMarker = false;
 		} else if (selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
