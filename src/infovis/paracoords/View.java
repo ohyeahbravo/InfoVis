@@ -40,7 +40,6 @@ public class View extends JPanel {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.clearRect(0, 0, (int) (getWidth()), getHeight());
-		//g2D.translate((getWidth() - getHeight()) / 2, 0);
 		
 		ArrayList<Data> markerData = new ArrayList<>();
 		
@@ -81,7 +80,7 @@ public class View extends JPanel {
 					g2D.setColor(Color.BLACK);
 					if(x + 1 < number) {
 						pointRange = model.getRanges().get(x + 1);
-						g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight() * 0.5));
+						g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight()));
 						
 					}
 				}
@@ -99,8 +98,8 @@ public class View extends JPanel {
 				g2D.setColor(markerColor);
 				g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
 				
-				g2D.setColor(color);
-				g2D.fill(new Rectangle2D.Double(xVal, yVal, 1, 1));
+				g2D.setColor(markerColor);
+				g2D.fill(new Rectangle2D.Double(xVal + 1, yVal + 1, 4, 4));
 					
 				g2D.setColor(markerColor);
 				if(x + 1 < number) {
