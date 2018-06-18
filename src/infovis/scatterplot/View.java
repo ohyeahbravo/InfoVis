@@ -67,8 +67,6 @@ public class View extends JPanel {
 			//Setting up the scatter plots
 			for(int x = 0; x < number; x++) {
 				for(int y = 0; y < number; y++) {
-					g2D.setColor(color);					
-					g2D.fillRect(xLabel + (x * plotSize), yLabel + (y * plotSize), plotSize, plotSize);
 					g2D.setColor(Color.BLACK);
 					g2D.drawRect(xLabel + x * plotSize, yLabel + y * plotSize, plotSize, plotSize);
 				}

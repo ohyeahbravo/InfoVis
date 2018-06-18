@@ -19,6 +19,7 @@ import java.util.List;
 
 public class MouseController implements MouseListener,MouseMotionListener {
 	 private Model model;
+	 private Model originalModel;
 	 private View view;
 	 private Element selectedElement = new None();
 	 private double mouseOffsetX;
@@ -28,6 +29,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private boolean fisheyeMode;
 	 private GroupingRectangle groupRectangle;
 	 private boolean moveMarker = false;
+	 Fisheye fisheye = new Fisheye();
 	 
 	/*
 	 * Getter And Setter
@@ -96,20 +98,22 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		
 		moveMarker = false;
 
-	   if (edgeDrawMode){
-			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
-			model.addElement(drawingEdge);
-		} else if (fisheyeMode){
-			/*
-			 * do handle interactions in fisheye mode
-			 */
-			view.repaint();
-			
-			// Assignment 1-2 : prepare to drag the marker
-		} else if (view.getMarker().contains((x-view.getOverviewOffset())/0.25, (y-view.getOverviewOffset())/0.25)) {
+	   if (view.getMarker().contains((x-view.getOverviewOffset())/0.25, (y-view.getOverviewOffset())/0.25)) {
 			moveMarker = true;
 			mouseOffsetX = (x-view.getOverviewOffset())/view.getRatio() - view.getTranslateX();
 			mouseOffsetY = (y-view.getOverviewOffset())/view.getRatio() - view.getTranslateY();			
+		} else if (edgeDrawMode){
+			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
+			model.addElement(drawingEdge);
+		} else if (fisheyeMode){
+			
+			
+			
+			fisheye.transform(model, view);
+			
+			view.repaint();
+			
+			// Assignment 1-2 : prepare to drag the marker
 		} else {
 			
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
@@ -180,19 +184,23 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		/*
 		 * Aufgabe 1.2
 		 */
-		if (fisheyeMode){
+		if (moveMarker) {
+			view.updateTranslation((x-view.getOverviewOffset())/view.getRatio() - mouseOffsetX, (y-view.getOverviewOffset())/view.getRatio() - mouseOffsetY);
+			view.repaint();
+		} else if (fisheyeMode){
 			/*
 			 * handle fisheye mode interactions
 			 */
+			
+			
+			fisheye.transform(model, view);
+			
 			view.repaint();
 		} else if (edgeDrawMode){
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
 
 			// Assignment 1-2 : moving the marker
-		} else if (moveMarker) {
-			view.updateTranslation((x-view.getOverviewOffset())/view.getRatio() - mouseOffsetX, (y-view.getOverviewOffset())/view.getRatio() - mouseOffsetY);
-			view.repaint();
 		} else if (selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
