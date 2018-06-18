@@ -40,20 +40,23 @@ public class View extends JPanel {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.clearRect(0, 0, (int) (getWidth()), getHeight());
+		g2D.translate(30, 40);
+		
+		int height = getHeight() - 70;
 		
 		ArrayList<Data> markerData = new ArrayList<>();
 		
 		for(int x = 0; x < number; x++) {
 			//Setting the title of the visualization
-			g2D.setFont(new Font("default", Font.BOLD, 16));
+			g2D.setFont(new Font("default", Font.BOLD, 14));
 			g2D.setColor(Color.BLACK);
-			g2D.drawString("Paracoords Visualization", (int) (getWidth()), (int) (getHeight()));
+			g2D.drawString("Paracoords Visualization", 160, -15);
 
 			//Setting the labels of the visualization
 			g2D.setColor(Color.BLACK);
 			g2D.setFont(new Font("default", Font.PLAIN, 10));
-			g2D.drawString(model.getLabels().get(x), (int) (x * plotSize), (int) (getHeight()));
-			g2D.drawLine(x * plotSize, 0, (int) (x * plotSize), (int) (getHeight()));
+			g2D.drawString(model.getLabels().get(x), (int) (x * plotSize), height + 20);
+			g2D.drawLine(x * plotSize, 0, (int) (x * plotSize), height);
 			
 			ArrayList<Data> point = model.getList();
 			
@@ -62,14 +65,14 @@ public class View extends JPanel {
 				Range pointRange = model.getRanges().get(x);
 				
 				int xVal = x * plotSize;
-				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight());
+				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height);
 				
 				//Check if the data are inside the marker
 				if(markerRectangle.contains(xVal, yVal)) {
 					markerData.add(p);
 				}else {
 					g2D.setColor(color);
-					g2D.fill(new Rectangle2D.Double(getWidth(), getHeight(), plotSize, plotSize));
+					g2D.fill(new Rectangle2D.Double(getWidth(), height, plotSize, plotSize));
 					
 					g2D.setColor(Color.BLACK);
 					g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
@@ -80,7 +83,7 @@ public class View extends JPanel {
 					g2D.setColor(Color.BLACK);
 					if(x + 1 < number) {
 						pointRange = model.getRanges().get(x + 1);
-						g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight()));
+						g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
 						
 					}
 				}
@@ -93,7 +96,7 @@ public class View extends JPanel {
 				Range pointRange = model.getRanges().get(x);
 				
 				int xVal = x * plotSize;
-				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight());
+				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height);
 				
 				g2D.setColor(markerColor);
 				g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
@@ -104,7 +107,7 @@ public class View extends JPanel {
 				g2D.setColor(markerColor);
 				if(x + 1 < number) {
 					pointRange = model.getRanges().get(x + 1);
-					g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * getHeight()));
+					g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
 						
 				}
 			}
