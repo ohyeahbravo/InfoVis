@@ -21,10 +21,11 @@ public class View extends JPanel{
 	private double scale = 1;
 	private double translateX= 0;
 	private double translateY= 0;
+	private double overviewX = 15;
+	private double overviewY = 15;
 	private Rectangle2D marker = new Rectangle2D.Double();
 	private Rectangle2D overviewRect = new Rectangle2D.Double();
 	private double ratio = 0.25; // overview is one fourth of the real objects
-	private double overviewOffset = 15;	// overview origin is (15, 15)
 
 	public Model getModel() {
 		return model;
@@ -51,6 +52,16 @@ public class View extends JPanel{
 		double markerH = getHeight()/scale;
 		double markerW = getWidth()/scale;
 		
+		// adjusting the overview position not to escape the whole frame
+		if(overviewX < 0.0)
+			overviewX = 0.0;
+		if(overviewY < 0.0)
+			overviewY = 0.0;
+		if(overviewX > getWidth() - overviewW)
+			overviewX = getWidth() - overviewW;
+		if(overviewY > getHeight() - overviewH)
+			overviewY = getHeight() - overviewH;
+		
 		// adjusting the marker position not to escape the overview frame
 		if(translateX < 0.0)
 			translateX = 0.0;
@@ -68,7 +79,7 @@ public class View extends JPanel{
 		
 		// assignment 1-1 : Overview Frame
 		g2D.scale(1/scale, 1/scale);	// scaling back
-		g2D.translate(overviewOffset, overviewOffset);	// shift the origin of the overview
+		g2D.translate(overviewX, overviewY);	// shift the origin of the overview
 		g2D.clearRect(0, 0, overviewW, overviewH);
 		overviewRect.setRect(0, 0, overviewW, overviewH);
 		g2D.draw(overviewRect);
@@ -81,6 +92,8 @@ public class View extends JPanel{
 		g2D.setStroke(new BasicStroke(1));
 		g2D.setColor(Color.RED);
 		g2D.draw(marker);
+		
+		g2D.scale(1/ratio, 1/ratio);
 	}
 	
 	private void paintDiagram(Graphics2D g2D){
@@ -98,8 +111,12 @@ public class View extends JPanel{
 	public double getRatio() {
 		return ratio;
 	}
-	public double getOverviewOffset() {
-		return overviewOffset;
+	
+	public double getOverviewX() {
+		return overviewX;
+	}
+	public double getOverviewY() {
+		return overviewY;
 	}
 	public double getTranslateX() {
 		return translateX;
@@ -118,6 +135,11 @@ public class View extends JPanel{
 		setTranslateY(y);
 	}	
 	
+	public void updateOverviewPosition(double x, double y) {
+		this.overviewX = x;
+		this.overviewY = y;
+	}
+	
 	public void updateMarker(int x, int y){
 		marker.setFrame(x, y, 16, 10);
 	}
@@ -125,8 +147,14 @@ public class View extends JPanel{
 	public Rectangle2D getMarker(){
 		return marker;
 	}
+	
+	public Rectangle2D getOverview() {
+		return overviewRect;
+	}
+	
 	public boolean markerContains(int x, int y){
 		return marker.contains(x, y);
 	}
+
 }
  
