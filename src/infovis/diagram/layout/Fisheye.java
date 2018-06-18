@@ -47,13 +47,15 @@ public class Fisheye implements Layout{
 
 	public Model transform(Model model, View view) {
 		// TODO Auto-generated method stub
-		for (Element element: model.getElements()){
-			setMouseCoords((int) element.getX(), (int) element.getY(), view);
-			element.setX(PfishX);
-			element.setY(PfishY);
+		
+		Model fishModel = new Model();
+		
+		for (Vertex vertex: model.getVertices()){
+			setMouseCoords((int) vertex.getX(), (int) vertex.getY(), view);
+			fishModel.addVertex(new Vertex(PfishX, PfishY));
 		}
 		
-		return null;
+		return fishModel;
 	}
 	
 	public double G(double value) {

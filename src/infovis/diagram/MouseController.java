@@ -19,7 +19,6 @@ import java.util.List;
 
 public class MouseController implements MouseListener,MouseMotionListener {
 	 private Model model;
-	 private Model originalModel;
 	 private View view;
 	 private Element selectedElement = new None();
 	 private double mouseOffsetX;
@@ -34,6 +33,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	/*
 	 * Getter And Setter
 	 */
+
 	 public Element getSelectedElement(){
 		 return selectedElement;
 	 }
@@ -107,9 +107,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			model.addElement(drawingEdge);
 		} else if (fisheyeMode){
 			
-			
-			
-			fisheye.transform(model, view);
+			view.setModel(fisheye.transform(model, view));
 			
 			view.repaint();
 			
@@ -192,10 +190,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			 * handle fisheye mode interactions
 			 */
 			
-			
-			fisheye.transform(model, view);
-			
+			view.setModel(fisheye.transform(model, view));
+	
 			view.repaint();
+			
 		} else if (edgeDrawMode){
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
