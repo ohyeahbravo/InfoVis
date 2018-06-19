@@ -10,10 +10,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 public class View extends JPanel {
@@ -22,6 +26,7 @@ public class View extends JPanel {
 	private Rectangle2D markerRectangle = new Rectangle2D.Double(0,0,0,0);
 	private Color color = Color.WHITE;
 	private Color markerColor = Color.RED;
+	private ArrayList<Line2D> lines = new ArrayList<Line2D>();
 	
 	public Rectangle2D getMarkerRectangle() {
 		return markerRectangle;
@@ -29,6 +34,12 @@ public class View extends JPanel {
 	public boolean overviewContain(double x, double y) {
 		return new Rectangle2D.Double((getWidth() - getHeight()) / 4, 0, getWidth(), getHeight()).contains(x,y);
 	}
+	public ArrayList<Line2D> getLine() {
+		return lines;
+	}
+	//public boolean lineContain(double x, double y) {
+		
+	//}
 
 	@Override
 	public void paint(Graphics g) {
@@ -56,7 +67,10 @@ public class View extends JPanel {
 			g2D.setColor(Color.BLACK);
 			g2D.setFont(new Font("default", Font.PLAIN, 10));
 			g2D.drawString(model.getLabels().get(x), (int) (x * plotSize), height + 20);
-			g2D.drawLine(x * plotSize, 0, (int) (x * plotSize), height);
+			Line2D line = new Line2D.Double(x * plotSize, 0, x * plotSize, height);
+			lines.add(line);
+			g2D.draw(line);
+			//g2D.drawLine(x * plotSize, 0, (int) (x * plotSize), height);
 			
 			ArrayList<Data> point = model.getList();
 			
@@ -89,6 +103,7 @@ public class View extends JPanel {
 				}
 			}
 		}
+
 		
 		//For the repaint of the points that are inside the marker
 		for(int x = 0; x < number; x++) {
@@ -116,6 +131,8 @@ public class View extends JPanel {
 		g2D.setStroke(new BasicStroke(1));
 		g2D.setColor(markerColor);
 		g2D.draw(markerRectangle);
+		
+
 		
 	}
 	
