@@ -17,9 +17,6 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
-
 public class View extends JPanel {
 	private Model model = null;
 	
@@ -27,6 +24,7 @@ public class View extends JPanel {
 	private Color color = Color.WHITE;
 	private Color markerColor = Color.RED;
 	private ArrayList<Line2D> lines = new ArrayList<Line2D>();
+	private ArrayList<Double> positions = new ArrayList<Double>();
 	
 	public Rectangle2D getMarkerRectangle() {
 		return markerRectangle;
@@ -37,16 +35,21 @@ public class View extends JPanel {
 	public ArrayList<Line2D> getLine() {
 		return lines;
 	}
-	//public boolean lineContain(double x, double y) {
-		
-	//}
-
+	public ArrayList<Double> getPositions() {
+		return positions;
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		
 		int number = model.getLabels().size();
 		
 		int plotSize = Math.min(getWidth()/number, getHeight()/number);
+		boolean firstRun = false;
+		
+		if(positions.isEmpty()) {
+			firstRun = true;
+		}
 		
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -54,10 +57,16 @@ public class View extends JPanel {
 		g2D.translate(30, 40);
 		
 		int height = getHeight() - 70;
-		
+		double pos;
 		ArrayList<Data> markerData = new ArrayList<>();
 		
 		for(int x = 0; x < number; x++) {
+			
+			if(firstRun) {
+				positions.add(x, (double) (x * plotSize));
+			}
+			pos = positions.get(x);
+			
 			//Setting the title of the visualization
 			g2D.setFont(new Font("default", Font.BOLD, 14));
 			g2D.setColor(Color.BLACK);
@@ -66,11 +75,21 @@ public class View extends JPanel {
 			//Setting the labels of the visualization
 			g2D.setColor(Color.BLACK);
 			g2D.setFont(new Font("default", Font.PLAIN, 10));
-			g2D.drawString(model.getLabels().get(x), (int) (x * plotSize), height + 20);
-			Line2D line = new Line2D.Double(x * plotSize, 0, x * plotSize, height);
-			lines.add(line);
+			g2D.drawString(model.getLabels().get(x), (int) pos, height + 20);
+			
+			// Draw Lines
+			g2D.setStroke(new BasicStroke(3));
+
+			Line2D line = new Line2D.Double(pos, 0, pos, height);
+			
+			if(firstRun) {
+				lines.add(line);
+			} else {
+				lines.get(x).setLine(line);
+			}
+
 			g2D.draw(line);
-			//g2D.drawLine(x * plotSize, 0, (int) (x * plotSize), height);
+			g2D.setStroke(new BasicStroke(1));			
 			
 			ArrayList<Data> point = model.getList();
 			
@@ -78,26 +97,24 @@ public class View extends JPanel {
 			for(Data p : point) {
 				Range pointRange = model.getRanges().get(x);
 				
-				int xVal = x * plotSize;
+				int xVal = (int) pos;
 				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height);
 				
 				//Check if the data are inside the marker
 				if(markerRectangle.contains(xVal, yVal)) {
 					markerData.add(p);
 				}else {
-					g2D.setColor(color);
-					g2D.fill(new Rectangle2D.Double(getWidth(), height, plotSize, plotSize));
+					// Data Points
+					g2D.setColor(Color.BLUE);
+					g2D.fill(new Rectangle2D.Double(xVal-3, yVal-3, 6, 6));
 					
+					// Connecting Lines
 					g2D.setColor(Color.BLACK);
-					g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
-					
-					g2D.setColor(Color.BLACK);
-					g2D.fill(new Rectangle2D.Double(xVal + 1, yVal + 1, 4, 4));
-					
-					g2D.setColor(Color.BLACK);
-					if(x + 1 < number) {
-						pointRange = model.getRanges().get(x + 1);
-						g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
+					if(x > 0 && x < number) {
+						pointRange = model.getRanges().get(x - 1);
+						double previous = positions.get(x-1);
+						int previousInt = (int) previous;
+						g2D.drawLine(xVal, yVal, previousInt, (int) ((p.getValue(x - 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
 						
 					}
 				}
@@ -107,23 +124,25 @@ public class View extends JPanel {
 		
 		//For the repaint of the points that are inside the marker
 		for(int x = 0; x < number; x++) {
+			
+			pos = positions.get(x);
+			
 			for(Data p : markerData) {
 				Range pointRange = model.getRanges().get(x);
 				
-				int xVal = x * plotSize;
+				int xVal = (int) pos;
 				int yVal = (int) ((p.getValue(x) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height);
 				
 				g2D.setColor(markerColor);
 				g2D.fill(new Rectangle2D.Double(xVal, yVal, 4, 4));
-				
-				g2D.setColor(markerColor);
-				g2D.fill(new Rectangle2D.Double(xVal + 1, yVal + 1, 4, 4));
 					
 				g2D.setColor(markerColor);
-				if(x + 1 < number) {
-					pointRange = model.getRanges().get(x + 1);
-					g2D.drawLine(xVal, yVal, ((x + 1) * plotSize), (int) ((p.getValue(x + 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
-						
+				if(x > 0 && x < number) {
+					pointRange = model.getRanges().get(x - 1);
+					double previous = positions.get(x-1);
+					int previousInt = (int) previous;
+					g2D.drawLine(xVal, yVal, previousInt, (int) ((p.getValue(x - 1) - pointRange.getMin()) / (pointRange.getMax() - pointRange.getMin()) * height));
+					
 				}
 			}
 		}
